@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="word.cpp">
+    <ClCompile Include="Word.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="word.h">
+    <ClInclude Include="Word.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

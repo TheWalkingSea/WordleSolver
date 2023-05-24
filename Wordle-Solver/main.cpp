@@ -1,29 +1,37 @@
-#include <iostream>;
-#include <fstream>;
-#include <string>;
+#include <iostream>
+#include <fstream>
+#include <string>
 #include <json/json.h>
-using namespace std;
+#include "Word.h"
 
-string guessWord(string& word) {
+
+using namespace std;
+Json::Value words;
+
+
+void guessWord(Word* word) {
+	for (int i = 0;i<words.size();i++) {
+		Word w(words[i].asString());
+	}
 }
 
 
 int main() {
-	Json::Value words;
 	ifstream f("words.json");
 	f >> words;
 	
-	string answer = "flank";
-	string currentw = "crane";
+	Word::setAnswer("flank");
+	Word currentw("crane");
+
 	for (int i = 0; i < 5; i++) {
-		string guess = guessWord(currentw);
-		cout << guess;
-		if (guess == answer) {
+		guessWord(&currentw);
+		cout << currentw;
+		if ( currentw.isCorrect() ) {
 			cout << " was the right answer" << endl;
 			return 0;
 		}
 		cout << endl;
 	}
 	cout << "Did not get the right word" << endl;
-	return 1;
+	return 0;
 }
