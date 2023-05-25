@@ -4,33 +4,57 @@
 #include <json/json.h>
 #include "Word.h"
 
-
 using namespace std;
-Json::Value words;
+vector<string> words;
 
 
-void guessWord(Word* word) {
-	for (int i = 0;i<words.size();i++) {
-		Word w(words[i].asString());
+Word getBestWord(vector<string> words, double& info) {
+	double maxInfo = 0;
+	Word maxWord;
+	for (string w : words) {
+		Word word(w);
+		double einfo = word.expectedInfo(words);
+		if (einfo > maxInfo) {
+			maxInfo = einfo;
+			maxWord = word;
+		}
 	}
+	info += maxInfo;
+	return maxWord;
 }
 
+vector<string> getWords() {
+	Json::Value w;
+	ifstream f("words.json");
+	f >> w;
+	vector<string> words;
+	words.reserve(w.size());
+	for (const Json::Value value : w) words.push_back(value.asString());
+	f.close();
+	return words;
+}
 
 int main() {
-	ifstream f("words.json");
-	f >> words;
-	
-	Word::setAnswer("flank");
-	Word currentw("crane");
 
-	for (int i = 0; i < 5; i++) {
-		guessWord(&currentw);
-		cout << currentw;
+	vector<string> words = getWords();
+	double totalInfo = 0.0; // Total number of bits of information
+
+	Word::setAnswer("flank");
+
+	Word currentw;
+
+	for (int i = 0; i < 1; i++) {
+		if (currentw) { currentw = getBestWord(words, totalInfo); }
+		else { currentw = Word("crane"); }
+		cout << currentw << "word";
 		if ( currentw.isCorrect() ) {
 			cout << " was the right answer" << endl;
 			return 0;
 		}
 		cout << endl;
+		currentw.updateHints();
+		currentw.filterWords(words, totalInfo);
+		//for (string w : words) cout << w << endl;
 	}
 	cout << "Did not get the right word" << endl;
 	return 0;

@@ -8,11 +8,13 @@ class Word {
 public:
 
 	Word(std::string);
+	Word();
 	static void setAnswer(std::string);
 	bool isCorrect() const;
 	double expectedInfo(std::vector<std::string>) const;
-	void filterWords(std::vector<std::string>&);
+	std::vector<std::string>& filterWords(std::vector<std::string>&, double);
 	void updateHints();
+	operator bool() const;
 	friend std::ostream& operator<<(std::ostream&, const Word&);
 private:
 	static std::string answer;

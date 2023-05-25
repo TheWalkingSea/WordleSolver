@@ -3,8 +3,10 @@
 #include <iostream>
 #include <cmath>
 #include "word.h"
-
+#include <Windows.h>
 #define DEBUG
+
+const double MINBITS = 5.0; // Min number of bits to start trying to guess the word, MAX is 7.92
 
 using namespace std;
 
@@ -16,17 +18,19 @@ static int count(string str, string letter) {
 	return cnt;
 }
 
+static int count(string str, char letter) {
+	return count(str, letter + "");
+}
 
 string Word::answer;
 
-Word::Word(string w) : word(w) {
-	updateHints();
-}
+Word::Word(string w) : word(w) {}
+
+Word::Word() : word("") {}
 
 bool Word::isCorrect() const { return word == answer; }
 
 void Word::setAnswer(string ans) { answer = ans; }
-
 
 /* Updates the hints list from the words and answer
 * @pre (answer != NULL && answer.length() == 5)
@@ -75,7 +79,7 @@ double Word::expectedInfo(vector<string> words) const {
 	}
 	double sum = 0;
 	for (int p : matches) {
-		double px = p / words.size();
+		double px = 0.0 * p / words.size();
 		sum += px * -log2(px);
 	}
 	return sum;
@@ -91,4 +95,39 @@ ostream& operator<<(std::ostream& os, const Word& word) {
 	#endif
 	os << endl;
 	return os;
+}
+
+/*
+* Filters out any words in words with the current word
+* 
+* @param words the words to filter through
+* @param double if bits is greater than MINBITS then greens are filtered, 
+*	if it is less than, then greens are not filtered (not enough information to make an actual guess)
+* 
+* @returns vector<string>& a reference to the words vector passed in
+* 
+* @pre (hints.size() > 0)
+*/
+vector<string>& Word::filterWords(vector<string>& words, double bits) {
+	for (int i = 0; i < words.size();i++) {
+		for (int j = 0; j < words[i].length();j++) {
+			char cletter = words[i][j];
+			char aletter = word[j];
+			if ((hints[j] == 1 && bits >= MINBITS &&
+				!(cletter == aletter)) ||
+				(hints[j] == 0 && word.find(cletter) > -1 &&
+				count(word, cletter) >= count(words[i].substr(0, j + 1), cletter)) ||
+				(hints[j] == -1 &&
+				!(cletter != aletter)
+				)) {
+				words.erase(words.begin() + i);
+				break;
+			}
+		}
+	}
+	return words;
+}
+
+Word::operator bool() const {
+	return word != "";
 }
