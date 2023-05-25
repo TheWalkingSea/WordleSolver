@@ -3,11 +3,9 @@
 #include <string>
 #include <json/json.h>
 #include "Word.h"
-
+#include "Word.cpp"
 using namespace std;
 vector<string> words;
-
-
 Word getBestWord(vector<string> words, double& info) {
 	double maxInfo = 0;
 	Word maxWord;
@@ -39,7 +37,7 @@ int main() {
 	vector<string> words = getWords();
 	double totalInfo = 0.0; // Total number of bits of information
 
-	Word::setAnswer("flank");
+	Word::setAnswer("cater");
 
 	Word currentw;
 

@@ -10,16 +10,13 @@ const double MINBITS = 5.0; // Min number of bits to start trying to guess the w
 
 using namespace std;
 
-static int count(string str, string letter) {
+static int count(string str, char letter) {
 	int cnt = 0;
-	for (char l : str) {
-		if (l + "" == letter) cnt++;
+	for (char& l : str) {
+		cout << l << letter << (l == letter);
+		if (l == letter) cnt++;
 	}
 	return cnt;
-}
-
-static int count(string str, char letter) {
-	return count(str, letter + "");
 }
 
 string Word::answer;
@@ -38,14 +35,16 @@ void Word::setAnswer(string ans) { answer = ans; }
 void Word::updateHints() {
 	for (int i = 0; i < word.length(); i++) {
 		string cword = word.substr(0, i + 1);
-		string cletter = word.substr(i, 1); // The current words letter @ index i
-		string aletter = answer.substr(i, 1); // The answers letter @ index i
+		char cletter = word[i]; // The current words letter @ index i
+		char aletter = answer[i]; // The answers letter @ index i
 		if (cletter == aletter) { hints.push_back(1); }
 		else if (answer.find(cletter) > -1 &&
 			count(answer, cletter) >= count(cword.substr(0, i + 1), cletter)) {
 			hints.push_back(0);
+			cout << "EEE" << endl;
 		}
 		else { hints.push_back(-1); }
+		cout << answer << " " << cletter << " " << cword << " " << count(answer, cletter) << endl;
 	}
 }
 
@@ -63,8 +62,8 @@ double Word::expectedInfo(vector<string> words) const {
 		int cnter = 5; // Start at 5th letter
 		int i = 0;
 		for (int i = 0; i < cword.length(); i++) {
-			string cletter = cword.substr(i, 1);
-			string aletter = word.substr(i, 1); // The actual word
+			char cletter = cword[i];
+			char aletter = word[i]; // The actual word
 			if (cletter == aletter) { // Green
 				i += cnter * 5 * 3; // Third part is green
 			}
@@ -113,12 +112,13 @@ vector<string>& Word::filterWords(vector<string>& words, double bits) {
 		for (int j = 0; j < words[i].length();j++) {
 			char cletter = words[i][j];
 			char aletter = word[j];
-			if ((hints[j] == 1 && bits >= MINBITS &&
+			if ((hints[j] == 1 && bits >= MINBITS && // Green
 				!(cletter == aletter)) ||
-				(hints[j] == 0 && word.find(cletter) > -1 &&
+				(hints[j] == 0 && word.find(cletter) > -1 && // Yellow
 				count(word, cletter) >= count(words[i].substr(0, j + 1), cletter)) ||
-				(hints[j] == -1 &&
-				!(cletter != aletter)
+				(hints[j] == -1 && // Grey
+				//If equal, erase, if the first occurence of cletter in word has hint -1, also erase
+				cletter == aletter && hints[word.find(cletter)] == -1
 				)) {
 				words.erase(words.begin() + i);
 				break;
