@@ -3,7 +3,8 @@
 #include <string>
 #include <json/json.h>
 #include "Word.h"
-#include "Word.cpp"
+
+
 using namespace std;
 vector<string> words;
 Word getBestWord(vector<string> words, double& info) {
@@ -41,10 +42,10 @@ int main() {
 
 	Word currentw;
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 5; i++) {
 		if (currentw) { currentw = getBestWord(words, totalInfo); }
 		else { currentw = Word("crane"); }
-		cout << currentw << "word";
+		cout << currentw << endl;
 		if ( currentw.isCorrect() ) {
 			cout << " was the right answer" << endl;
 			return 0;
@@ -52,7 +53,6 @@ int main() {
 		cout << endl;
 		currentw.updateHints();
 		currentw.filterWords(words, totalInfo);
-		//for (string w : words) cout << w << endl;
 	}
 	cout << "Did not get the right word" << endl;
 	return 0;

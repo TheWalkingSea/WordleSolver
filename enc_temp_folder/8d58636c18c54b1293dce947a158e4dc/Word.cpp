@@ -116,13 +116,12 @@ vector<string>& Word::filterWords(vector<string>& words, double bits) {
 			*/
 			if (hints[j] == 1 && cletter != aletter && 
 				(word.find(cletter) != string::npos || bits >= MINBITS) || // Green
-				/* If equal, erase OR if aletter not in words[i], erase
+				/* If equal, erase OR If cletter not in words[i], erase
 				Add a feature that basically works with duplicates, so if theres one yellow, 
 				one grey, same letter, filter out any words with duplicates*/
-				(hints[j] == 0 && (cletter == aletter || words[i].find(aletter) == string::npos)) || //Yellow
+				(hints[j] == 0 && (cletter == aletter || words[i].find(cletter) == string::npos)) || //Yellow
 				(hints[j] == -1 && // Grey
-				// If equal, erase. 
-				// Also if the first hint in word with letter cletter is -1 and cletter is in words[i], also erase
+				// If equal, erase, if the first occurence of cletter in word has hint -1, also erase
 				(cletter == aletter || (word.find(cletter) != string::npos && hints[word.find(cletter)] == -1))
 				)) {
 				words.erase(words.begin() + i);

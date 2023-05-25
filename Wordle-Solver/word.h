@@ -4,6 +4,8 @@
 #include <vector>
 #include <initializer_list>
 
+int count(std::string, char);
+
 class Word {
 public:
 
