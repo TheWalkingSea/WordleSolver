@@ -8,6 +8,7 @@
 using namespace std;
 vector<string> words;
 Word getBestWord(vector<string> words, double& info) {
+	if (words.size() == 1) { return Word(words[0]); }
 	double maxInfo = 0;
 	Word maxWord;
 	for (string w : words) {
@@ -38,16 +39,15 @@ int main() {
 	vector<string> words = getWords();
 	double totalInfo = 0.0; // Total number of bits of information
 
-	Word::setAnswer("cater");
-
+	Word::setAnswer("slurs");
 	Word currentw;
 
 	for (int i = 0; i < 5; i++) {
 		if (currentw) { currentw = getBestWord(words, totalInfo); }
 		else { currentw = Word("crane"); }
-		cout << currentw << endl;
+		cout << currentw;
 		if ( currentw.isCorrect() ) {
-			cout << " was the right answer" << endl;
+			cout << " was the right answer";
 			return 0;
 		}
 		cout << endl;

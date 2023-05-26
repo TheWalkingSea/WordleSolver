@@ -4,7 +4,6 @@
 #include <cmath>
 #include "word.h"
 #include <Windows.h>
-#define DEBUG
 
 const double MINBITS = 5.0; // Min number of bits to start trying to guess the word, MAX is 7.92
 
@@ -32,6 +31,16 @@ void Word::setAnswer(string ans) { answer = ans; }
 * @pre (answer != NULL && answer.length() == 5)
 */
 void Word::updateHints() {
+	if (sizeof(answer)) {
+		for (int i = 0; i < 5; i++) {
+			int j;
+			cin >> j;
+			hints.push_back(j);
+			
+		}
+		return;
+	}
+
 	for (int i = 0; i < word.length(); i++) {
 		string cword = word.substr(0, i + 1);
 		char cletter = word[i]; // The current words letter @ index i
@@ -55,18 +64,19 @@ double Word::expectedInfo(vector<string> words) const {
 	// 243, 81, 27, 9, 3
 	vector<int> matches(243, 0); // 3^5
 	for (string cword : words) {
+		if (cword == word) continue; // Skip if the words match
 		int cnter = 81; // Start at 5th letter
 		int i = 0;
-		for (int i = 0; i < cword.length(); i++) {
-			char cletter = cword[i];
-			char aletter = word[i]; // The actual word
+		for (int j = 0; j < cword.length(); j++) {
+			char cletter = cword[j];
+			char aletter = word[j]; // The actual word
 			if (cletter == aletter) { // Green
 				i += cnter * 2; // Third part is green
 			}
 			// If cletter is in word and the number of cletters in word is greater than or equal to
-			// number of cletters in cword up to index i inclusive
+			// number of cletters in cword up to index j inclusive
 			else if (word.find(cletter) != string::npos &&
-				count(word, cletter) >= count(cword.substr(0, i+1), cletter)) {
+				count(word, cletter) >= count(cword.substr(0, j+1), cletter)) {
 				i += cnter; // Second part is yellow
 			}
 			// First part is red, no need to add to index
@@ -77,20 +87,16 @@ double Word::expectedInfo(vector<string> words) const {
 	double sum = 0;
 	for (int p : matches) {
 		double px = 1.0 * p / words.size();
-		sum += px * -log2(px); // Formula for calculating average number of bits ; sum of p(x) * -log2(p(x))
+		if (px != 0) { // log2 is undefined
+			sum += px * -log2(px); // Formula for calculating average number of bits ; sum of p(x) * -log2(p(x))
+		}
 	}
 	return sum;
 }
 
 
 ostream& operator<<(std::ostream& os, const Word& word) {
-	os << word.word << " ";
-	#ifndef DEBUG
-	for (int i : word.hints) {
-		os << i << " ";
-	}
-	#endif
-	os << endl;
+	os << word.word;
 	return os;
 }
 
@@ -108,7 +114,6 @@ ostream& operator<<(std::ostream& os, const Word& word) {
 vector<string>& Word::filterWords(vector<string>& words, double bits) {
 	for (size_t i = words.size(); i-->0 ; ) {
 		for (int j = 0; j < words[i].length();j++) {
-			string cword = words[i]; // Remove only for debugging
 			char cletter = words[i][j];
 			char aletter = word[j];
 			/* If cletter and aletter arent equal, erase IF bits >= MINBITS.
