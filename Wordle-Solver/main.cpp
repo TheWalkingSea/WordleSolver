@@ -45,7 +45,7 @@ int main() {
 	if (word != "manual") {
 		Word::setAnswer(word); 
 		bool flag = false;
-		for (int i = 0; i < words.size() && word.length() == 5; i++) {
+		for (size_t i = 0; i < words.size() && word.length() == 5; i++) {
 			if (words[i] == word) {
 				flag = true;
 				break;
@@ -74,5 +74,6 @@ int main() {
 		currentw.filterWords(words, totalInfo);
 	}
 	cout << "Did not get the right word" << endl;
+	cin;
 	return 0;
 }
