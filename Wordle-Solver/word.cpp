@@ -55,27 +55,29 @@ double Word::expectedInfo(vector<string> words) const {
 	// 243, 81, 27, 9, 3
 	vector<int> matches(243, 0); // 3^5
 	for (string cword : words) {
-		int cnter = 5; // Start at 5th letter
+		int cnter = 81; // Start at 5th letter
 		int i = 0;
 		for (int i = 0; i < cword.length(); i++) {
 			char cletter = cword[i];
 			char aletter = word[i]; // The actual word
 			if (cletter == aletter) { // Green
-				i += cnter * 5 * 3; // Third part is green
+				i += cnter * 2; // Third part is green
 			}
+			// If cletter is in word and the number of cletters in word is greater than or equal to
+			// number of cletters in cword up to index i inclusive
 			else if (word.find(cletter) != string::npos &&
 				count(word, cletter) >= count(cword.substr(0, i+1), cletter)) {
-				i += cnter * 5 * 2; // Second part is yellow
+				i += cnter; // Second part is yellow
 			}
 			// First part is red, no need to add to index
-			cnter--;
+			cnter /= 3;
 		}
 		matches[i]++;
 	}
 	double sum = 0;
 	for (int p : matches) {
-		double px = 0.0 * p / words.size();
-		sum += px * -log2(px);
+		double px = 1.0 * p / words.size();
+		sum += px * -log2(px); // Formula for calculating average number of bits ; sum of p(x) * -log2(p(x))
 	}
 	return sum;
 }
@@ -104,7 +106,7 @@ ostream& operator<<(std::ostream& os, const Word& word) {
 * @pre (hints.size() > 0)
 */
 vector<string>& Word::filterWords(vector<string>& words, double bits) {
-	for (int i = 0; i < words.size();i++) {
+	for (size_t i = words.size(); i-->0 ; ) {
 		for (int j = 0; j < words[i].length();j++) {
 			string cword = words[i]; // Remove only for debugging
 			char cletter = words[i][j];
@@ -121,10 +123,12 @@ vector<string>& Word::filterWords(vector<string>& words, double bits) {
 				one grey, same letter, filter out any words with duplicates*/
 				(hints[j] == 0 && (cletter == aletter || words[i].find(aletter) == string::npos)) || //Yellow
 				(hints[j] == -1 && // Grey
-				// If equal, erase. 
-				// Also if the first hint in word with letter cletter is -1 and cletter is in words[i], also erase
-				(cletter == aletter || (word.find(cletter) != string::npos && hints[word.find(cletter)] == -1))
-				)) {
+				/* If equal, erase.
+				Also if the first hint in word with letter cletter is -1 and cletter is in words[i], 
+				also erase*/
+				cletter == aletter || (word.find(cletter) != string::npos &&
+				hints[word.find(cletter)] == -1 && words[i].find(cletter) != string::npos
+				))) {
 				words.erase(words.begin() + i);
 				break;
 			}
