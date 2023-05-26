@@ -4,7 +4,6 @@
 #include <json/json.h>
 #include "Word.h"
 
-
 using namespace std;
 vector<string> words;
 Word getBestWord(vector<string> words, double& info) {
@@ -38,11 +37,31 @@ int main() {
 
 	vector<string> words = getWords();
 	double totalInfo = 0.0; // Total number of bits of information
+	// Word::setAnswer("slurs");
+	cout << "Enter a word or enter 'manual' to manually enter hints: " << flush;
 
-	Word::setAnswer("slurs");
+	string word;
+	cin >> word;
+	if (word != "manual") {
+		Word::setAnswer(word); 
+		bool flag = false;
+		for (int i = 0; i < words.size() && word.length() == 5; i++) {
+			if (words[i] == word) {
+				flag = true;
+				break;
+			}
+		}
+		if (!flag) {
+			cout << "Enter a legal word" << endl;
+			return -1;
+		}
+	}
+	else { cout << "Entered manual mode, for each guess enter the corresponding guess, -1 is grey, 0 is yellow, 1 is green" << endl; }
+
+
 	Word currentw;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		if (currentw) { currentw = getBestWord(words, totalInfo); }
 		else { currentw = Word("crane"); }
 		cout << currentw;

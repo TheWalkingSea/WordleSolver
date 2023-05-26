@@ -31,12 +31,12 @@ void Word::setAnswer(string ans) { answer = ans; }
 * @pre (answer != NULL && answer.length() == 5)
 */
 void Word::updateHints() {
-	if (sizeof(answer)) {
+	if (answer == "") {
 		for (int i = 0; i < 5; i++) {
+			cout << "Hint " << (i + 1) << ": " << flush;
 			int j;
 			cin >> j;
 			hints.push_back(j);
-			
 		}
 		return;
 	}
