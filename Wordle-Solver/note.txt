@@ -1,0 +1,1 @@
+My first ever bot when I was learning C++ that used information theory to solve wordle. This was a really cool and stressful program to make and I hope that I will come back to C++ one day.

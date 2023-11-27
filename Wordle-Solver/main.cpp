@@ -34,7 +34,6 @@ vector<string> getWords() {
 }
 
 int main() {
-
 	vector<string> words = getWords();
 	double totalInfo = 0.0; // Total number of bits of information
 	// Word::setAnswer("slurs");
@@ -66,7 +65,8 @@ int main() {
 		else { currentw = Word("crane"); }
 		cout << currentw;
 		if ( currentw.isCorrect() ) {
-			cout << " was the right answer";
+			cout << " was the right answer (" << (i+1) << ") tries.";
+			cin;
 			return 0;
 		}
 		cout << endl;
